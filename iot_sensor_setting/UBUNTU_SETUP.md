@@ -18,7 +18,7 @@ cd /path/to/iot_sensor_setting
 python3 -m venv .venv
 source .venv/bin/activate
 pip install --upgrade pip
-pip install numpy pandas matplotlib PyQt5 SQLAlchemy psycopg2-binary
+pip install -r requirements.txt
 ```
 
 Run the tool:

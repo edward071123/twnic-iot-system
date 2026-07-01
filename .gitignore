@@ -2,6 +2,15 @@
 .DS_Store
 Thumbs.db
 
+# Python
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
 # Node.js
 node_modules/
 npm-debug.log*
@@ -39,6 +48,15 @@ dist-ssr/
 *.swo
 
 # Project specific
+iot_sensor_setting/.matplotlib_cache/
+iot_sensor_setting/output/
+iot_sensor_setting/outputs/
+iot_sensor_setting/exports/
+iot_sensor_setting/*.log
+iot_sensor_setting/*.sqlite
+iot_sensor_setting/*.sqlite3
+iot_sensor_setting/*.db
+
 backend/logs/
 backend/temp/
 */backend/logs/

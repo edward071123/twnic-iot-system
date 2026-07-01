@@ -1,0 +1,6 @@
+numpy
+pandas
+matplotlib
+PyQt5
+SQLAlchemy
+psycopg2-binary

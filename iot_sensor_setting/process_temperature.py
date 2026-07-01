@@ -1317,7 +1317,20 @@ class HeatmapWindow(QWidget):
         self.care_event_ranges = analysis.care_event_ranges
         self.care_record_event_ranges = analysis.care_record_event_ranges
         self.care_records = analysis.care_records
-        print("Care frame count:", len(self.care_indices))
+        max_care_score = float(np.max(self.care_scores)) if self.care_scores.size else 0.0
+        start_time = self.times[0] if self.times else "N/A"
+        end_time = self.times[-1] if self.times else "N/A"
+        print(
+            "Care analysis:",
+            f"frames={len(self.frames)}",
+            f"range={start_time}~{end_time}",
+            f"care_frame_count={len(self.care_indices)}",
+            f"care_records={len(self.care_records)}",
+            f"max_care_score={max_care_score:.3f}",
+            f"threshold={self.get_motion_threshold_score():.3f}",
+            f"smooth_seconds={float(getattr(self, 'score_smooth_seconds', self.DEFAULT_SCORE_SMOOTH_SECONDS)):.1f}",
+            f"frame_period_seconds={self.frame_period_seconds:.3f}",
+        )
 
     def turning_care_config(self) -> TurningCareConfig:
         return TurningCareConfig(
