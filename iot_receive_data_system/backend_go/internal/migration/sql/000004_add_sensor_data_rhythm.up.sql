@@ -1,0 +1,2 @@
+ALTER TABLE sensor_datas
+  ADD COLUMN IF NOT EXISTS rhythm VARCHAR(32);

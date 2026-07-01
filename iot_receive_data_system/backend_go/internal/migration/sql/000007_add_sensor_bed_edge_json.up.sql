@@ -1,0 +1,2 @@
+ALTER TABLE sensors
+ADD COLUMN IF NOT EXISTS bed_edge_json JSONB;

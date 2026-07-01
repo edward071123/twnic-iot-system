@@ -1,0 +1,140 @@
+services:
+  irds_db_postgresql_v1:
+    image: postgres:16
+    container_name: irds_db_postgresql_v1
+    restart: always
+    environment:
+      POSTGRES_DB: ${PG_DB_NAME}
+      POSTGRES_USER: ${PG_USER}
+      POSTGRES_PASSWORD: ${PG_PASSWORD}
+      TZ: UTC
+    volumes:
+      - db_data_pg:/var/lib/postgresql/data
+    ports:
+      - "${PG_PORT}:5432"
+
+  backend_go:
+    build:
+      context: ./backend_go
+      dockerfile: Dockerfile
+      network: host
+    container_name: irds_backend_go_v1
+    restart: always
+    environment:
+      - PORT=${PORT}
+      - PG_HOST=${PG_HOST}
+      - PG_PORT=5432
+      - PG_USER=${PG_USER}
+      - PG_PASSWORD=${PG_PASSWORD}
+      - PG_DB_NAME=${PG_DB_NAME}
+      - GO_MIGRATE_ON_START=${GO_MIGRATE_ON_START:-}
+      - GO_PARTITION_MAINTAIN_ON_START=${GO_PARTITION_MAINTAIN_ON_START:-}
+      - GO_RAW_LOG_RETENTION_DAYS=${GO_RAW_LOG_RETENTION_DAYS:-}
+      - GO_RAW_LOG_PARTITION_BACK_DAYS=${GO_RAW_LOG_PARTITION_BACK_DAYS:-}
+      - GO_RAW_LOG_PARTITION_AHEAD_DAYS=${GO_RAW_LOG_PARTITION_AHEAD_DAYS:-}
+      - GO_SENSOR_DATA_PARTITION_BACK_MONTHS=${GO_SENSOR_DATA_PARTITION_BACK_MONTHS:-}
+      - GO_SENSOR_DATA_PARTITION_AHEAD_MONTHS=${GO_SENSOR_DATA_PARTITION_AHEAD_MONTHS:-}
+      - GO_SEED_ON_START=${GO_SEED_ON_START:-}
+      - GO_SEED_HOSPITAL_NAME=${GO_SEED_HOSPITAL_NAME:-}
+      - GO_SENSOR_WORKERS=${GO_SENSOR_WORKERS:-}
+      - GO_RAW_WORKERS=${GO_RAW_WORKERS:-}
+      - GO_SENSOR_BATCH_SIZE=${GO_SENSOR_BATCH_SIZE:-}
+      - GO_RAW_BATCH_SIZE=${GO_RAW_BATCH_SIZE:-}
+      - GO_BATCH_INTERVAL_MS=${GO_BATCH_INTERVAL_MS:-}
+      - GO_QUEUE_SIZE=${GO_QUEUE_SIZE:-}
+      - GO_QUEUE_OFFER_TIMEOUT_MS=${GO_QUEUE_OFFER_TIMEOUT_MS:-}
+      - GO_MAX_BUFFER_SIZE=${GO_MAX_BUFFER_SIZE:-}
+      - GO_MAX_BODY_BYTES=${GO_MAX_BODY_BYTES:-}
+      - GO_SENSOR_CACHE_TTL_SEC=${GO_SENSOR_CACHE_TTL_SEC:-}
+      - GO_THERMAL_FRAME_INTERVAL_SEC=${GO_THERMAL_FRAME_INTERVAL_SEC:-}
+      - GO_REQUEST_DEDUP_TTL_SEC=${GO_REQUEST_DEDUP_TTL_SEC:-}
+      - GO_REQUEST_DEDUP_MAX_KEYS=${GO_REQUEST_DEDUP_MAX_KEYS:-}
+      - GO_EVENT_DEDUP_TTL_SEC=${GO_EVENT_DEDUP_TTL_SEC:-}
+      - GO_EVENT_DEDUP_MAX_KEYS=${GO_EVENT_DEDUP_MAX_KEYS:-}
+      - GO_DB_MAX_OPEN_CONNS=${GO_DB_MAX_OPEN_CONNS:-}
+      - GO_DB_MAX_IDLE_CONNS=${GO_DB_MAX_IDLE_CONNS:-}
+      - GO_DB_CONN_MAX_LIFETIME_SEC=${GO_DB_CONN_MAX_LIFETIME_SEC:-}
+      - GO_DB_QUERY_TIMEOUT_SEC=${GO_DB_QUERY_TIMEOUT_SEC:-}
+      - GO_DB_INSERT_TIMEOUT_SEC=${GO_DB_INSERT_TIMEOUT_SEC:-}
+      - GO_HTTP_READ_TIMEOUT_SEC=${GO_HTTP_READ_TIMEOUT_SEC:-}
+      - GO_HTTP_WRITE_TIMEOUT_SEC=${GO_HTTP_WRITE_TIMEOUT_SEC:-}
+      - GO_HTTP_IDLE_TIMEOUT_SEC=${GO_HTTP_IDLE_TIMEOUT_SEC:-}
+      - GO_HTTP_SHUTDOWN_TIMEOUT_SEC=${GO_HTTP_SHUTDOWN_TIMEOUT_SEC:-}
+      - GO_DEVICE_OFFLINE_SECONDS=${GO_DEVICE_OFFLINE_SECONDS:-}
+      - GO_HTTP_LOG_EVERY_REQUEST=${GO_HTTP_LOG_EVERY_REQUEST:-}
+      - GO_HTTP_LOG_REQUEST_BODY=${GO_HTTP_LOG_REQUEST_BODY:-}
+      - GO_HTTP_LOG_REQUEST_BODY_MAX_BYTES=${GO_HTTP_LOG_REQUEST_BODY_MAX_BYTES:-}
+      - GO_DB_DUMP_TOKEN=${GO_DB_DUMP_TOKEN:-}
+    depends_on:
+      - irds_db_postgresql_v1
+    ports:
+      - "${PORT}:3002"
+
+  frontend_vue:
+    image: node:20-slim
+    container_name: irds_frontend_vue_v1
+    restart: always
+    working_dir: /app
+    depends_on:
+      - backend_go
+    ports:
+      - "80:80"
+    volumes:
+      - ./frontend_vue:/app
+      - /app/node_modules
+    environment:
+      - VITE_API_BASE_URL=${VITE_API_BASE_URL}
+      - VITE_PROXY_TARGET=${BACKEND_INTERNAL_BASE_URL}
+      - VITE_ENGINEER_USERNAME=${VITE_ENGINEER_USERNAME}
+      - VITE_ENGINEER_PASSWORD=${VITE_ENGINEER_PASSWORD}
+    command: sh -c "npm install && npm run dev -- --host 0.0.0.0 --port 80"
+
+  mock_go:
+    build:
+      context: ./mock_go
+      dockerfile: Dockerfile
+      network: host
+    container_name: irds_mock_go_v1
+    restart: "no"
+    depends_on:
+      - backend_go
+      - irds_db_postgresql_v1
+    environment:
+      - PG_HOST=irds_db_postgresql_v1
+      - PG_PORT=5432
+      - PG_USER=${PG_USER}
+      - PG_PASSWORD=${PG_PASSWORD}
+      - PG_DB_NAME=${PG_DB_NAME}
+      - MOCK_API_BASE_URL=${BACKEND_INTERNAL_BASE_URL}
+      - MOCK_TARGET_SENSORS=${MOCK_TARGET_SENSORS:-108}
+      - MOCK_TICK_MS=${MOCK_TICK_MS:-1000}
+      - MOCK_TEMPERATURE_POINTS=${MOCK_TEMPERATURE_POINTS:-768}
+      - MOCK_WORKERS=${MOCK_WORKERS:-}
+      - MOCK_HTTP_TIMEOUT_MS=${MOCK_HTTP_TIMEOUT_MS:-900}
+      - MOCK_BASELINE_ENABLED=${MOCK_BASELINE_ENABLED:-true}
+      - MOCK_SCENARIO_ENABLED=${MOCK_SCENARIO_ENABLED:-false}
+      - MOCK_SCENARIO_RATE=${MOCK_SCENARIO_RATE:-0}
+      - MOCK_OUT_OF_BED_SENSORS=${MOCK_OUT_OF_BED_SENSORS:-0201_01,0203_03,0205_05}
+      - MOCK_OFFLINE_SENSORS=${MOCK_OFFLINE_SENSORS:-0201_02,0203_04,0205_06}
+      - MOCK_WARNING_SENSORS=${MOCK_WARNING_SENSORS:-0207_01,0207_03,0209_01}
+
+  sensor_dump:
+    build:
+      context: ./tools/sensor_dump
+      dockerfile: Dockerfile
+      network: host
+    profiles:
+      - tools
+    environment:
+      - PG_HOST=irds_db_postgresql_v1
+      - PG_PORT=5432
+      - PG_USER=${PG_USER}
+      - PG_PASSWORD=${PG_PASSWORD}
+      - PG_DB_NAME=${PG_DB_NAME}
+    volumes:
+      - ./dumps:/dumps
+    depends_on:
+      - irds_db_postgresql_v1
+
+volumes:
+  db_data_pg:
