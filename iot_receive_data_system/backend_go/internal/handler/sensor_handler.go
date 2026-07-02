@@ -881,9 +881,6 @@ func shouldPersistThermalFrame(row model.SensorInsertRow, ref model.SensorDataWr
 	if !row.HasThermalFrame || strings.TrimSpace(row.ThermalFrameJSON) == "" {
 		return false
 	}
-	if row.OutOfRange == 1 {
-		return false
-	}
 	if interval <= 0 {
 		return true
 	}
