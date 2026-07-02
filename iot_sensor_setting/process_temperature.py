@@ -64,7 +64,7 @@ DEFAULT_PG_PORT = 5435
 DEFAULT_PG_USER = "postgres"
 DEFAULT_PG_PASSWORD = "postgres"
 DEFAULT_PG_DATABASE = "sg_tch_v3"
-DEFAULT_TABLE = "sensor_thermal_frames"
+DEFAULT_TABLE = "sensor_datas"
 DEFAULT_SENSOR_ID = "6"
 DATE_TIME_DISPLAY_FORMAT = "yyyy-MM-dd HH:mm:ss"
 BED_EDGE_COLUMN = "bed_edge_json"
@@ -483,10 +483,17 @@ def parse_temperature_json(value) -> Optional[np.ndarray]:
 
 
 def detect_thermal_json_column(columns: Iterable[str]) -> str:
-    for column_name in ("frame_json", "temperature_json"):
+    for column_name in ("temperature_json", "frame_json"):
         if column_name in columns:
             return column_name
     raise ValueError("資料表缺少熱像欄位: frame_json 或 temperature_json")
+
+
+def detect_high_temperature_column(columns: Iterable[str]) -> Optional[str]:
+    column_set = set(columns)
+    if "high_temperature" in column_set:
+        return "high_temperature"
+    return None
 
 
 class DateTimePicker(QWidget):
@@ -664,9 +671,16 @@ def load_frames_from_postgres(
             raise ValueError(f"{table_name} 缺少必要欄位: {', '.join(missing)}")
 
         thermal_column = detect_thermal_json_column(columns)
+        high_temperature_column = detect_high_temperature_column(columns)
         time_column = detect_time_column(columns)
+        high_temperature_select = (
+            f"{quote_identifier(high_temperature_column)} AS high_temperature"
+            if high_temperature_column
+            else "NULL AS high_temperature"
+        )
         sql = f"""
             SELECT {quote_identifier(thermal_column)} AS thermal_json,
+                   {high_temperature_select},
                    {quote_identifier(time_column)} AS frame_time
             FROM {quote_table_name(table_name)}
             WHERE sensor_id = :sensor_id
@@ -699,10 +713,13 @@ def load_frames_from_postgres(
 
     for row in df.itertuples(index=False):
         try:
+            high_temperature = getattr(row, "high_temperature", None)
             frame = parse_temperature_json(row.thermal_json)
             if frame is None:
                 skipped += 1
                 continue
+            if high_temperature is None:
+                print("警告: 資料列缺少 high_temperature，仍使用 temperature_json 繪製熱像。")
             if expected_shape is None:
                 expected_shape = frame.shape
             elif frame.shape != expected_shape:
