@@ -572,7 +572,7 @@ func (r *SQLSensorRepository) GetWardFloorOverview(ctx context.Context, floor in
 			SensorNumber: sensorNumber,
 			DeviceType:   deviceType,
 			DeviceOnline: deviceOnline,
-			Presence:     !outOfRange.Valid || outOfRange.Int64 != 1,
+			Presence:     true,
 			PatientName:  patientName,
 			Latest:       buildWardDataPoint(dataID, timestamp, heartRate, rhythm, breathRate, outOfRange, highTemperature, sql.NullString{}),
 		}
@@ -1022,7 +1022,7 @@ func buildWardDataPoint(dataID sql.NullInt64, ts sql.NullTime, heartRate sql.Nul
 		BPDia:           dia,
 		Rhythm:          rhythmText,
 		OutOfRange:      out,
-		Presence:        out != 1,
+		Presence:        true,
 	}
 }
 

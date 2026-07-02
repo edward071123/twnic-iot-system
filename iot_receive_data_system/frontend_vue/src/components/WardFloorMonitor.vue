@@ -262,10 +262,10 @@ onMounted(async () => {
   
       const maxHistoryLength = 12000;
       const liveChartWindowMs = 5 * 60 * 1000;
-      const overviewPollMs = 1000;
-      const selectedHistoryPollMs = 1000;
-      const selectedThermalPollMs = 1000;
-      const deviceOfflineMs = 30000;
+      const overviewPollMs = 500;
+      const selectedHistoryPollMs = 500;
+      const selectedThermalPollMs = 500;
+      const deviceOfflineMs = Number(import.meta.env.VITE_DEVICE_OFFLINE_MS || 5000);
     const roomsLayer = byId('rooms-layer');
     const bedsLayer = byId('beds-layer');
     if (!roomsLayer || !bedsLayer) {
@@ -866,8 +866,6 @@ onMounted(async () => {
       const deviceStatusText = (isOnline) => (isOnline ? t('ward.status.online') : t('ward.status.offline'));
       const presenceStatusText = (isInBed) => (isInBed ? t('ward.legend.inBed') : t('ward.legend.outOfBed'));
       const pointIsInBed = (point) => {
-        if (point?.presence !== undefined) return Boolean(point.presence);
-        if (point?.out_of_range !== undefined && point.out_of_range !== null) return Number(point.out_of_range) !== 1;
         return true;
       };
 
@@ -907,10 +905,7 @@ onMounted(async () => {
         if (latest) {
           const latestTs = new Date(latest.timestamp).getTime();
           if (Number.isFinite(latestTs)) bed.latestTimestamp = latestTs;
-          if (!pointIsInBed(latest)) {
-            bed.presence = false;
-            return;
-          }
+          bed.presence = true;
           const latestTemp = Number(latest.temperature ?? latest.high_temperature);
           const latestHr = Number(latest.heart_rate);
           const latestBreath = Number(latest.breath_rate);
@@ -948,11 +943,7 @@ onMounted(async () => {
         if (!point) return;
         const ts = new Date(point.timestamp).getTime();
         if (Number.isNaN(ts)) return;
-        if (point.presence !== undefined) {
-          bed.presence = Boolean(point.presence);
-        } else if (point.out_of_range !== undefined && point.out_of_range !== null) {
-          bed.presence = Number(point.out_of_range) !== 1;
-        }
+        bed.presence = true;
         const isInBed = bed.presence !== false;
         if (!isInBed) {
           bed.thermalFrame = null;
@@ -1347,7 +1338,7 @@ onMounted(async () => {
         
         g.classList.toggle('alert', hasAlert);
         g.classList.toggle('offline', !bed.deviceOnline);
-        g.classList.toggle('out-of-bed', bed.deviceOnline && !isInBed);
+        g.classList.toggle('out-of-bed', false);
         g.classList.toggle('selected', selectedBedId === bed.id);
 
         const patient = g.querySelector('.bed-patient');
@@ -1367,7 +1358,7 @@ onMounted(async () => {
         const arr = beds;
         const online = arr.filter((b) => b.deviceOnline).length;
         const offline = arr.length - online;
-        const outOfBed = arr.filter((b) => b.deviceOnline && b.presence === false).length;
+        const outOfBed = 0;
         const alerts = arr.filter(hasWarningLight).length;
         document.getElementById('summary').textContent = t('ward.summary.text', {
           online,
@@ -1921,7 +1912,7 @@ onMounted(async () => {
       fetchOverview();
       startWardStream();
       tick();
-      timer = setInterval(tick, 1000);
+      timer = setInterval(tick, 500);
   cleanup = () => {
     if (timer) clearInterval(timer)
     updatedClassTimers.forEach((timeoutID) => clearTimeout(timeoutID))

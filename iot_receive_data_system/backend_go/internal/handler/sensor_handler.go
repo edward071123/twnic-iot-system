@@ -916,7 +916,7 @@ func (b *sensorBatcher) publishRealtime(job model.SensorWriteJob, ref model.Sens
 		SensorNumber: job.RawLogRow.SensorNumber,
 		DeviceType:   string(job.SensorRow.DeviceType),
 		DeviceOnline: true,
-		Presence:     job.SensorRow.OutOfRange != 1,
+		Presence:     true,
 		Latest: model.WardSensorDataPoint{
 			DataID:          ref.DataID,
 			Timestamp:       ref.Timestamp,
@@ -928,7 +928,7 @@ func (b *sensorBatcher) publishRealtime(job model.SensorWriteJob, ref model.Sens
 			BPDia:           bpDia,
 			Rhythm:          rhythm,
 			OutOfRange:      job.SensorRow.OutOfRange,
-			Presence:        job.SensorRow.OutOfRange != 1,
+			Presence:        true,
 		},
 	})
 }

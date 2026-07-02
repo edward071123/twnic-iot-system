@@ -87,6 +87,7 @@ services:
       - VITE_PROXY_TARGET=${BACKEND_INTERNAL_BASE_URL}
       - VITE_ENGINEER_USERNAME=${VITE_ENGINEER_USERNAME}
       - VITE_ENGINEER_PASSWORD=${VITE_ENGINEER_PASSWORD}
+      - VITE_DEVICE_OFFLINE_MS=${VITE_DEVICE_OFFLINE_MS}
     command: sh -c "npm install && npm run dev -- --host 0.0.0.0 --port 80"
 
   mock_go:
