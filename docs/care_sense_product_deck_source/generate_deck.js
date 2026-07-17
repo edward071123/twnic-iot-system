@@ -354,7 +354,7 @@ function slideCircle(slide, x, y, d, color, label) {
   const nodes = [
     { x: 0.65, w: 2.05, t: '床邊感測器', d: '生命表徵\n無接觸感測矩陣', c: C.cyan },
     { x: 3.05, w: 2.05, t: 'Go 接收服務', d: '資料驗證\n即時事件', c: C.blue },
-    { x: 5.45, w: 2.05, t: '資料層', d: 'PostgreSQL\nRedis', c: C.magenta },
+    { x: 5.45, w: 2.05, t: '資料層', d: '歷史量測資料庫\n即時資料快取', c: C.magenta },
     { x: 7.85, w: 2.05, t: 'AI 分析', d: '人形／照護\n床緣／警報', c: C.orange },
     { x: 10.25, w: 2.45, t: '應用與串接', d: '護理站／API\n報表／外部平台', c: C.green },
   ];
@@ -365,7 +365,7 @@ function slideCircle(slide, x, y, d, color, label) {
     text(s, n.d, n.x + 0.14, 3.86, n.w - 0.28, 0.42, 8.8, C.muted, { align: 'center', breakLine: true });
     if (i < nodes.length - 1) s.addShape(pptx.ShapeType.chevron, { x: n.x + n.w + 0.08, y: 3.03, w: 0.27, h: 0.6, fill: { color: C.line }, line: { color: C.line } });
   });
-  const tags = [['即時', 'Redis 保存熱像與分析狀態', C.orange], ['歷史', 'PostgreSQL 保存可查詢量測', C.blue], ['開放', 'REST API 與報表輸出', C.green]];
+  const tags = [['即時', '即時快取保存感測與分析狀態', C.orange], ['歷史', '歷史資料庫保存可查詢量測', C.blue], ['開放', 'REST API 與報表輸出', C.green]];
   tags.forEach((t, i) => {
     const x = 1.15 + i * 4.05;
     rect(s, x, 5.22, 3.62, 0.78, 'F8E9D3', 0.14, C.line);
