@@ -1,0 +1,21 @@
+{
+  "name": "sensor_product_deck",
+  "version": "1.0.0",
+  "description": "CARE SENSE 感測器產品商業簡報產生器",
+  "main": "generate_deck.js",
+  "scripts": {
+    "generate": "node generate_deck.js"
+  },
+  "keywords": [],
+  "type": "commonjs",
+  "dependencies": {
+    "fontkit": "^2.0.4",
+    "linebreak": "^1.1.0",
+    "pptxgenjs": "^4.0.1",
+    "prismjs": "^1.30.0",
+    "skia-canvas": "^3.0.8"
+  },
+  "allowScripts": {
+    "skia-canvas@3.0.8": true
+  }
+}
