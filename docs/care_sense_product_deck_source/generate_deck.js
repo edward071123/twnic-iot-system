@@ -171,9 +171,9 @@ function addDashboardWireframe(slide, x, y, w, h) {
   text(s, 'PRODUCT OVERVIEW  /  2026', 0.7, 6.35, 4.4, 0.25, 8, C.muted, { charSpacing: 1.5 });
 }
 
-// 2 — Product prototype
+// 2 — Product system
 {
-  const s = addSlide(); title(s, 'Product prototype', '雙感測模組，讓同一台裝置同時「看見」與「量測」', '上方紅外線熱成像建立溫度分布；下方毫米波捕捉人體微動與生命表徵。');
+  const s = addSlide(); title(s, 'Product system', '雙感測模組，讓同一台裝置同時「看見」與「量測」', '上方紅外線熱成像建立溫度分布；下方毫米波捕捉人體微動與生命表徵。');
   rect(s, 0.62, 1.78, 5.0, 4.95, 'F4E3C9', 0.18, C.line);
   addProductImage(s, A.productFront, 0.88, 2.02, 4.48, 3.72);
   // These two labels intentionally overlay the product image to identify the physical modules.
@@ -199,12 +199,45 @@ function addDashboardWireframe(slide, x, y, w, h) {
   radarTags.forEach((v, i) => pill(s, v, 6.25 + i * 1.48, 6.0, 1.28, i === 1 ? C.red : C.green, 'FFF3E4'));
 }
 
+// 3 — Product views and installation interfaces
+{
+  const s = addSlide(); title(s, 'Product views', '產品外觀與安裝介面', '透過產品的三個實際視角，快速理解感測配置、機身結構與供電接口。');
+  const views = [
+    {
+      x: 0.62, image: A.productFront, number: '01', title: '正面感測配置', accent: C.red,
+      detail: '上方為 768 點紅外線熱成像陣列；下方為毫米波微動感測模組。',
+      tag: '感測面朝向床位',
+    },
+    {
+      x: 4.77, image: A.productAngle, number: '02', title: '立體機身結構', accent: C.orange,
+      detail: '封裝盒體整合雙感測模組與內部運算元件，提供床邊部署所需保護。',
+      tag: '機身結構視角',
+    },
+    {
+      x: 8.92, image: A.productSide, number: '03', title: '側面電源接口', accent: C.green,
+      detail: '側面配置電源輸入接口；佈線時需避開人員動線並保留維護空間。',
+      tag: '供電與維護介面',
+    },
+  ];
+  views.forEach((v) => {
+    rect(s, v.x, 1.82, 3.8, 4.35, C.panel, 0.18, v.accent);
+    text(s, v.number, v.x + 0.26, 2.06, 0.46, 0.26, 9, v.accent, { bold: true });
+    text(s, v.title, v.x + 0.72, 2.0, 2.65, 0.34, 15, C.ink, { bold: true });
+    rect(s, v.x + 0.22, 2.48, 3.36, 2.1, 'F8E9D3', 0.12, C.line);
+    addProductImage(s, v.image, v.x + 0.36, 2.57, 3.08, 1.9);
+    text(s, v.detail, v.x + 0.28, 4.78, 3.22, 0.66, 9.4, C.ink, { breakLine: true, valign: 'top' });
+    pill(s, v.tag, v.x + 0.72, 5.58, 2.35, v.accent, 'FFF7EA');
+  });
+  rect(s, 1.22, 6.4, 10.9, 0.42, 'FFF7EA', 0.1, C.line);
+  text(s, '安裝原則：感測面涵蓋目標床位 · 電源線避開照護動線 · 實際角度與距離依現場校準', 1.52, 6.49, 10.3, 0.2, 8.8, C.muted, { bold: true, align: 'center' });
+}
+
 // 2 — Promise
 {
   const s = addSlide(); title(s, 'Product promise', '一套系統，接手日常量測與持續觀察', '讓照護人員不必一直「去量」，而是在需要介入時收到清楚訊號。');
   metricCard(s, 0.62, 1.9, 2.82, 1.7, '無接觸', '降低配戴與操作負擔', C.cyan, '不需貼片、不需綁帶；以非侵入式感測持續取得生命表徵。');
   metricCard(s, 3.62, 1.9, 2.82, 1.7, '24 / 7', '連續監測與留痕', C.blue, '即時資料、事件與歷史趨勢同步保存，支援追溯與交班。');
-  metricCard(s, 6.62, 1.9, 2.82, 1.7, 'AIoT', '邊緣感測＋雲端串接', C.magenta, '從床邊感測、Redis 即時資料到 API 與報表輸出。');
+  metricCard(s, 6.62, 1.9, 2.82, 1.7, 'AIoT', '邊緣感測＋雲端串接', C.magenta, '從床邊感測、即時資料處理到 API 與報表輸出。');
   metricCard(s, 9.62, 1.9, 2.82, 1.7, '一目瞭然', '從數據到可行動警報', C.orange, '把異常、離床、翻身拍背與床緣事件轉成清楚狀態。');
   rect(s, 0.62, 4.02, 11.82, 1.98, C.panel, 0.14, C.line);
   text(s, '核心價值', 0.9, 4.28, 1.3, 0.3, 9, C.cyan, { bold: true });
@@ -313,7 +346,7 @@ function slideCircle(slide, x, y, d, color, label) {
   const s = addSlide(); title(s, 'From signal to action', '警報不是多一個聲音，而是更清楚的優先順序', '把感測結果轉成狀態、事件、通知與可追溯紀錄。');
   const steps = [
     ['01', '持續偵測', '生命表徵、姿態、人在床'],
-    ['02', 'AI 判讀', '異常、翻身拍背、床緣'],
+    ['02', '系統判讀', '異常、翻身拍背、床緣'],
     ['03', '即時提示', '床位燈號、警報、摘要'],
     ['04', '事件留痕', '時間、數值、判定與狀態'],
   ];
@@ -334,10 +367,10 @@ function slideCircle(slide, x, y, d, color, label) {
   const s = addSlide(); title(s, 'Command center', '一眼掌握整層狀態，點選即看單床細節', '床位狀態、警示燈、生命表徵與歷史趨勢集中在同一工作畫面。');
   addInterfaceScreenshot(s, A.commandCenter, 0.62, 1.78, 8.55, 4.92);
   const callouts = [
-    ['全床位總覽', '快速辨識在線、離床與警示床位', C.cyan],
-    ['單床詳情', '查看最新數值、判定與歷史時間軸', C.orange],
-    ['即時燈號', '心率、心律、溫度、呼吸狀態', C.green],
-    ['事件追溯', '依時間範圍回看趨勢與照護情境', C.magenta],
+    ['全床位總覽', '快速辨識在線、離床與警示床位', C.ink],
+    ['單床詳情', '查看最新數值、判定與歷史時間軸', C.ink],
+    ['即時燈號', '心率、心律、溫度、呼吸狀態', C.ink],
+    ['事件追溯', '依時間範圍回看趨勢與照護情境', C.ink],
   ];
   callouts.forEach((c, i) => {
     const y = 1.92 + i * 1.15;
@@ -353,9 +386,9 @@ function slideCircle(slide, x, y, d, color, label) {
   const s = addSlide(); title(s, 'AIoT architecture', '從感測器到平台，資料鏈可部署、可擴充', '即時資料與歷史資料分流，兼顧反應速度、追溯能力與外部整合。');
   const nodes = [
     { x: 0.65, w: 2.05, t: '床邊感測器', d: '生命表徵\n無接觸感測矩陣', c: C.cyan },
-    { x: 3.05, w: 2.05, t: 'Go 接收服務', d: '資料驗證\n即時事件', c: C.blue },
+    { x: 3.05, w: 2.05, t: 'Go 接收服務', d: '資料檢核\n即時事件', c: C.blue },
     { x: 5.45, w: 2.05, t: '資料層', d: '歷史量測資料庫\n即時資料快取', c: C.magenta },
-    { x: 7.85, w: 2.05, t: 'AI 分析', d: '人形／照護\n床緣／警報', c: C.orange },
+    { x: 7.85, w: 2.05, t: '系統分析', d: '人形／照護\n床緣／警報', c: C.orange },
     { x: 10.25, w: 2.45, t: '應用與串接', d: '護理站／API\n報表／外部平台', c: C.green },
   ];
   nodes.forEach((n, i) => {
@@ -402,7 +435,7 @@ function slideCircle(slide, x, y, d, color, label) {
   const cols = [
     { x: 0.62, t: '照護人員', c: C.cyan, q: '少做重複量測，\n更快看見需要介入的床位', list: ['即時狀態集中', '事件自動留痕', '減少人工抄錄'] },
     { x: 3.72, t: '機構管理者', c: C.orange, q: '把照護品質與流程，\n轉成可觀察資訊', list: ['風險與警報摘要', '照護事件追溯', '導入成效可管理'] },
-    { x: 6.82, t: '資訊團隊', c: C.blue, q: '標準介面整合，\n降低資料孤島與維運成本', list: ['API 優先架構', 'Redis＋PostgreSQL', '模組化部署'] },
+    { x: 6.82, t: '資訊團隊', c: C.blue, q: '標準介面整合，\n降低資料孤島與維運成本', list: ['API 優先架構', '即時快取＋歷史資料庫', '模組化部署'] },
     { x: 9.92, t: '合作平台', c: C.green, q: '快速取得即時數據，\n擴充既有產品服務', list: ['資料與事件串接', '報表與儀表板', '可客製輸出'] },
   ];
   cols.forEach((c) => {
@@ -416,10 +449,10 @@ function slideCircle(slide, x, y, d, color, label) {
 
 // 12 — Commercial model
 {
-  const s = addSlide(); title(s, 'Go-to-market', '從單點驗證到規模部署，降低導入風險', '以場域驗證、分階段擴充與介面整合，建立可複製的商業導入模式。');
+  const s = addSlide(); title(s, 'Go-to-market', '從單點導入到規模部署，建立專業導入流程', '以場域規劃、分階段擴充與介面整合，建立可複製的商業導入模式。');
   const phases = [
     ['01', '場域盤點', '床位、網路、警報流程\n與串接需求確認', C.cyan],
-    ['02', '小規模 Pilot', '校準量測與 AI 門檻\n驗證照護流程', C.blue],
+    ['02', '單床導入', '校準量測與系統門檻\n確認照護流程', C.blue],
     ['03', '樓層部署', '設備、儀表板、告警\n與人員教育', C.orange],
     ['04', '平台整合', 'API、報表、事件推送\n與營運優化', C.green],
   ];
@@ -431,7 +464,7 @@ function slideCircle(slide, x, y, d, color, label) {
     text(s, p[2], x + 0.24, 3.38, 2.0, 0.52, 9, C.muted, { breakLine: true, valign: 'top' });
   });
   text(s, '商業組合', 0.72, 4.75, 1.1, 0.32, 10, C.cyan, { bold: true });
-  const models = [['硬體設備', '感測器與邊緣設備'], ['軟體訂閱', '監測、AI 分析與管理介面'], ['整合服務', 'API、報表與指定平台串接']];
+  const models = [['硬體設備', '感測器與邊緣設備'], ['軟體訂閱', '監測、系統分析與管理介面'], ['整合服務', 'API、報表與指定平台串接']];
   models.forEach((m, i) => {
     const x = 2.05 + i * 3.55;
     rect(s, x, 4.65, 3.15, 1.18, 'F8E9D3', 0.15, C.line);
@@ -448,10 +481,10 @@ function slideCircle(slide, x, y, d, color, label) {
   addProductImage(s, A.productFront, 7.62, 1.1, 4.96, 5.05);
   pill(s, 'NEXT STEP', 0.65, 0.72, 1.55, C.red, 'F8E9D3');
   text(s, '讓照護人員，\n把時間留給照護。', 0.65, 1.48, 6.15, 1.35, 32, C.ink, { bold: true, breakLine: true, valign: 'top' });
-  text(s, '從一個床位開始驗證，\n建立可擴充到整層、整院與跨平台的照護感知能力。', 0.68, 3.28, 5.7, 0.9, 14, C.muted, { breakLine: true, valign: 'top' });
+  text(s, '從一個床位開始導入，\n建立可擴充到整層、整院與跨平台的照護感知能力。', 0.68, 3.28, 5.7, 0.9, 14, C.muted, { breakLine: true, valign: 'top' });
   rect(s, 0.66, 4.72, 5.85, 1.15, C.panel, 0.16, C.cyan);
   text(s, '建議下一步', 0.94, 4.96, 1.25, 0.25, 9, C.cyan, { bold: true });
-  text(s, '場域訪談  →  Pilot 規格  →  量測與流程驗證', 0.94, 5.34, 5.0, 0.3, 12, C.ink, { bold: true });
+  text(s, '場域訪談  →  導入規格  →  量測與流程建置', 0.94, 5.34, 5.0, 0.3, 12, C.ink, { bold: true });
   text(s, 'CARE SENSE  ·  CONTACTLESS CARE INTELLIGENCE', 0.68, 6.42, 5.8, 0.25, 8, C.muted, { charSpacing: 1.2 });
 }
 

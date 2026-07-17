@@ -1,6 +1,6 @@
 # CARE SENSE 產品簡報
 
-- `care_sense_product_overview_zh-TW.pptx`：可直接編輯的 16:9 商業簡報，共 14 頁，包含產品實機介紹。
+- `care_sense_product_overview_zh-TW.pptx`：可直接編輯的 16:9 商業簡報，共 15 頁，包含雙感測模組、產品三視角與安裝介面介紹。
 - `care_sense_product_overview_preview.png`：全頁縮圖預覽。
 - `care_sense_product_deck_source/`：PptxGenJS 原始碼與版面輔助程式；所有視覺均為可編輯的抽象示意圖，不含真人熱成像素材。
 - `refences/transparent/`：三張產品照片的透明背景 PNG，供簡報與其他商業素材使用。
