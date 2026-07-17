@@ -173,20 +173,30 @@ function addDashboardWireframe(slide, x, y, w, h) {
 
 // 2 — Product prototype
 {
-  const s = addSlide(); title(s, 'Product prototype', '一個床邊感測裝置，接手連續觀察', '產品採非侵入式設計，將感測、邊緣處理與資料傳輸整合於單一裝置。');
-  const views = [
-    [A.productFront, 0.62, '正面配置', '感測開口與通訊模組'],
-    [A.productAngle, 4.78, '立體視角', '盒體保護與床邊部署'],
-    [A.productSide, 8.94, '側面配置', '電源與延伸感測模組'],
-  ];
-  views.forEach((v, i) => {
-    rect(s, v[1], 1.86, 3.78, 3.7, i === 1 ? 'F8E9D3' : C.panel, 0.18, i === 1 ? C.red : C.line);
-    addProductImage(s, v[0], v[1] + 0.18, 2.0, 3.42, 2.72);
-    text(s, v[2], v[1] + 0.3, 4.78, 3.18, 0.3, 13, i === 1 ? C.red : C.ink, { bold: true, align: 'center' });
-    text(s, v[3], v[1] + 0.3, 5.15, 3.18, 0.25, 8.8, C.muted, { align: 'center' });
-  });
-  rect(s, 1.2, 5.92, 10.94, 0.66, 'FFF7EA', 0.16, C.line);
-  text(s, '實際外觀可依量產、安裝方式與場域需求持續優化；核心價值來自無接觸感測與 AIoT 資料服務。', 1.52, 6.09, 10.3, 0.28, 10.5, C.ink, { bold: true, align: 'center' });
+  const s = addSlide(); title(s, 'Product prototype', '雙感測模組，讓同一台裝置同時「看見」與「量測」', '上方紅外線熱成像建立溫度分布；下方毫米波捕捉人體微動與生命表徵。');
+  rect(s, 0.62, 1.78, 5.0, 4.95, 'F4E3C9', 0.18, C.line);
+  addProductImage(s, A.productFront, 0.88, 2.02, 4.48, 3.72);
+  // These two labels intentionally overlay the product image to identify the physical modules.
+  pill(s, '上方 · 紅外線熱成像', 1.0, 2.08, 2.25, C.red, 'FFF3E4');
+  pill(s, '下方 · 毫米波模組', 2.42, 4.92, 2.25, C.green, 'FFF3E4');
+  rect(s, 1.02, 5.88, 4.2, 0.54, 'FFF7EA', 0.12, C.line);
+  text(s, '雙感測融合：溫度矩陣 ＋ 微動生命表徵', 1.22, 6.02, 3.8, 0.23, 9.5, C.ink, { bold: true, align: 'center' });
+
+  rect(s, 5.92, 1.78, 6.78, 2.25, 'F7E6D2', 0.18, C.red);
+  text(s, '01', 6.22, 2.04, 0.45, 0.25, 9, C.red, { bold: true });
+  text(s, '紅外線熱成像陣列', 6.78, 1.98, 2.7, 0.38, 17, C.ink, { bold: true });
+  text(s, '32 × 24 ＝ 768 個溫度點位', 9.48, 1.99, 2.82, 0.34, 13, C.red, { bold: true, align: 'right' });
+  text(s, '每個點位量測物體表面的紅外線輻射並換算溫度，組成 32 × 24 溫度矩陣；系統再透過插值呈現連續分布，供體表溫度、人體輪廓、人在床與床緣事件判定使用。', 6.24, 2.48, 6.0, 0.78, 10.4, C.ink, { breakLine: true, valign: 'top' });
+  const thermalTags = ['體表溫度', '人體輪廓', '床緣判定', '低解析隱私'];
+  thermalTags.forEach((v, i) => pill(s, v, 6.25 + i * 1.48, 3.42, 1.28, i === 0 ? C.red : C.orange, 'FFF3E4'));
+
+  rect(s, 5.92, 4.28, 6.78, 2.45, 'E9E3D1', 0.18, C.green);
+  text(s, '02', 6.22, 4.55, 0.45, 0.25, 9, C.green, { bold: true });
+  text(s, '毫米波微動感測模組', 6.78, 4.48, 3.2, 0.38, 17, C.ink, { bold: true });
+  text(s, '非接觸取得呼吸、心率與人體微動', 10.05, 4.5, 2.25, 0.34, 10.2, C.green, { bold: true, align: 'right' });
+  text(s, '毫米波向人體發射低功率電磁波並接收反射訊號，從胸腔起伏與細微位移中分析週期變化；不需配戴貼片或接觸皮膚，適合長時間觀察呼吸率、心率、存在狀態與動作變化。', 6.24, 5.0, 6.0, 0.78, 10.4, C.ink, { breakLine: true, valign: 'top' });
+  const radarTags = ['呼吸率', '心率／心跳', '人體存在', '微動趨勢'];
+  radarTags.forEach((v, i) => pill(s, v, 6.25 + i * 1.48, 6.0, 1.28, i === 1 ? C.red : C.green, 'FFF3E4'));
 }
 
 // 2 — Promise
@@ -435,7 +445,7 @@ function slideCircle(slide, x, y, d, color, label) {
 {
   const s = addSlide();
   rect(s, 7.38, 0.48, 5.44, 6.25, 'F4E3C9', 0.2, C.line);
-  addProductImage(s, A.productSide, 7.65, 1.05, 4.9, 5.25);
+  addProductImage(s, A.productFront, 7.62, 1.1, 4.96, 5.05);
   pill(s, 'NEXT STEP', 0.65, 0.72, 1.55, C.red, 'F8E9D3');
   text(s, '讓照護人員，\n把時間留給照護。', 0.65, 1.48, 6.15, 1.35, 32, C.ink, { bold: true, breakLine: true, valign: 'top' });
   text(s, '從一個床位開始驗證，\n建立可擴充到整層、整院與跨平台的照護感知能力。', 0.68, 3.28, 5.7, 0.9, 14, C.muted, { breakLine: true, valign: 'top' });
